@@ -1,0 +1,24 @@
+{
+  "name": "haresu",
+  "version": "0.1.0",
+  "description": "A visual meta-harness: build agent harnesses on a canvas and improve them version by version with evals and a promotion gate.",
+  "license": "Apache-2.0",
+  "bin": { "haresu": "bin/haresu.js" },
+  "files": [
+    "bin/",
+    "backend/pyproject.toml",
+    "backend/haresu/",
+    "!backend/haresu/**/__pycache__",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": { "node": ">=18" },
+  "repository": { "type": "git", "url": "git+https://github.com/abyssace/haresu.git" },
+  "bugs": { "url": "https://github.com/abyssace/haresu/issues" },
+  "homepage": "https://github.com/abyssace/haresu#readme",
+  "keywords": ["agents", "llm", "harness", "evals", "mcp", "visual"],
+  "scripts": {
+    "build:ui": "node scripts/build-ui.mjs",
+    "test:ui": "node scripts/test-ui.mjs"
+  }
+}

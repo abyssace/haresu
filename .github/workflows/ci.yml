@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e "backend[dev]"
+      - run: python -m pytest backend -q
+
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: pip install -e "backend[dev]"
+      - run: npm --prefix frontend ci
+      - run: npm --prefix frontend run build
+      - run: node scripts/test-ui.mjs
+
+  paquete-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: El paquete trae la interfaz compilada y la skill
+        run: |
+          npm pack --json > pack.json
+          node -e "const f=require('./pack.json')[0].files.map(x=>x.path); for (const need of ['backend/haresu/static/index.html','backend/haresu/skill/SKILL.md','bin/haresu.js','backend/pyproject.toml']) { if(!f.includes(need)) { console.error('Falta '+need); process.exit(1) } } if (f.some(x=>x.includes('__pycache__')||x.includes('/tests/'))) { console.error('Sobran archivos'); process.exit(1) } console.log(f.length+' archivos en el paquete')"
